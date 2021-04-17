@@ -1,0 +1,39 @@
+.root {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+}
+
+.root .highlight {
+    background-color: aquamarine;
+    height: 500px;
+    width: 1000px;
+}
+
+.Embed {
+    font-family: sans-serif;
+    text-align: center;
+}
+.button-wrapper {
+    height: 40px;
+    margin: 10px;
+    max-width: 200px;
+    padding: 5px;
+    z-index: 1;
+}
+
+.excalidraw-wrapper {
+    height: 800px;
+    margin: 50px;
+}
+
+.export-wrapper {
+    display: flex;
+    flex-direction: column;
+    margin: 50px;
+}
+
+.export-wrapper__checkbox {
+    display: flex;
+}
