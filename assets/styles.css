@@ -7,8 +7,13 @@
 
 .root .highlight {
     background-color: aquamarine;
-    height: 500px;
-    width: 1000px;
+    /* min-height: 200px; */
+    /* position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%; */
+    /* width: 10000px; */
 }
 
 .Embed {
@@ -24,6 +29,7 @@
 }
 
 .excalidraw-wrapper {
+    width: 800px;
     height: 800px;
     margin: 50px;
 }

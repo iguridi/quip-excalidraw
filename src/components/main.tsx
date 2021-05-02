@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import quip from "quip-apps-api";
 import { menuActions, Menu } from "../menus";
 import { AppData, RootEntity } from "../model/root";
 import Embed from "./embed";
@@ -60,10 +61,12 @@ export default class Main extends Component<MainProps, MainState> {
         return (
             <div className={"root"}>
                 <div className={"highlight"}>
-                    <h1>Hello, World4!</h1>
-                    <p>App Data:</p>
-                    <Embed></Embed>
-                    <pre>{JSON.stringify(data)}</pre>
+                    <div className={"excalidraw-wrapper"}>
+                        <h1>Hello, World4!</h1>
+                        <p>App Data:</p>
+                        <Embed></Embed>
+                        <pre>{JSON.stringify(data)}</pre>
+                    </div>
                 </div>
             </div>
         );

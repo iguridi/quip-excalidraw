@@ -2,8 +2,8 @@ import quip from "quip-apps-api";
 import React from "react";
 import ReactDOM from "react-dom";
 import Main from "./components/main";
-import {Menu} from "./menus";
-import {RootEntity} from "./model/root";
+import { Menu } from "./menus";
+import { RootEntity } from "./model/root";
 
 quip.apps.registerClass(RootEntity, RootEntity.ID);
 
@@ -16,7 +16,11 @@ declare global {
 
 window.EXCALIDRAW_ASSET_PATH = "assets";
 
-
+// quip.apps.enableResizing({
+//     minWidth: 200,
+//     minHeight: 200,
+//     maintainAspectRatio: false,
+// });
 quip.apps.initialize({
     initializationCallback: function (
         rootNode: Element,
