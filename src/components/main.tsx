@@ -32,6 +32,12 @@ export default class Main extends Component<MainProps, MainState> {
         // Set up the listener on the rootRecord (RootEntity). The listener
         // will propogate changes to the render() method in this component
         // using setState
+        // process.stdout.write('waaa');
+        // quip.apps.enableResizing({
+        //     minWidth: 200,
+        //     minHeight: 200,
+        //     maintainAspectRatio: false,
+        // });
         const { rootRecord } = this.props;
         rootRecord.listen(this.refreshData_);
         this.refreshData_();
@@ -60,13 +66,11 @@ export default class Main extends Component<MainProps, MainState> {
         const { isHighlighted } = data;
         return (
             <div className={"root"}>
-                <div className={"highlight"}>
-                    <div className={"excalidraw-wrapper"}>
-                        <h1>Hello, World4!</h1>
-                        <p>App Data:</p>
-                        <Embed></Embed>
-                        <pre>{JSON.stringify(data)}</pre>
-                    </div>
+                <div className={"excalidraw-wrapper"}>
+                    {/* <h1>Hello, World4!</h1>
+                        <p>App Data:</p> */}
+                    <Embed></Embed>
+                    {/* <pre>{JSON.stringify(data)}</pre> */}
                 </div>
             </div>
         );

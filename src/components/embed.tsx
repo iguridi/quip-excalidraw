@@ -53,7 +53,7 @@ export default function Embed() {
                 }
             ],
             appState: {
-                viewBackgroundColor: "#edf2ff"
+                // viewBackgroundColor: "#edf2ff"
             }
         };
         excalidrawRef.current!.updateScene(sceneData);
@@ -61,7 +61,7 @@ export default function Embed() {
 
     return (
         <div className="App">
-            <h1> Excalidraw Example</h1>
+            {/* <h1> Excalidraw Example</h1> */}
             <div className="excalidraw-wrapper">
                 <Excalidraw
                     ref={excalidrawRef}
