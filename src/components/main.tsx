@@ -49,6 +49,7 @@ export default class Main extends Component<MainProps, MainState> {
         const { rootRecord } = this.props;
         const elements = JSON.parse(rootRecord.get('elements'));
         const appState = JSON.parse(rootRecord.get('state'));
+        // Excalidraw calls .foreach on collaborators, so we transform them to a type that allows for it
         appState.collaborators = new Map(Object.entries(appState.collaborators));
         console.log('wjjj', appState);
         
