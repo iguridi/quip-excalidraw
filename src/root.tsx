@@ -5,7 +5,20 @@ import Main from "./components/main";
 import { Menu } from "./menus";
 import { RootEntity } from "./model/root";
 
-quip.apps.registerClass(RootEntity, RootEntity.ID);
+
+
+
+class Root extends quip.apps.RootRecord {
+    static getProperties = () => ({
+        elements: "string",
+        state: "string",
+        version: "number",
+    })
+}
+
+quip.apps.registerClass(Root, "root");
+
+// quip.apps.registerClass(RootEntity, RootEntity.ID);
 
 const menu = new Menu();
 

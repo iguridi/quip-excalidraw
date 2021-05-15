@@ -3,6 +3,13 @@ import quip from "quip-apps-api";
 import { menuActions, Menu } from "../menus";
 import { AppData, RootEntity } from "../model/root";
 import Embed from "./embed";
+import { getSceneVersion } from "@excalidraw/excalidraw";
+
+import type { ExcalidrawElement } from "@excalidraw/excalidraw/types/element/types";
+import {
+    AppState,
+    SceneData
+} from "@excalidraw/excalidraw/types/types";
 
 interface MainProps {
     rootRecord: RootEntity;
@@ -15,15 +22,28 @@ interface MainState {
     data: AppData;
 }
 export default class Main extends Component<MainProps, MainState> {
-    setupMenuActions_(rootRecord: RootEntity) {
-        menuActions.toggleHighlight = () =>
-            rootRecord.getActions().onToggleHighlight();
+    // setupMenuActions_(rootRecord: RootEntity) {
+    //     menuActions.toggleHighlight = () =>
+    //         rootRecord.getActions().onToggleHighlight();
+    // }
+
+    private onChange = (elements: readonly ExcalidrawElement[], state: AppState) => {
+        const { rootRecord } = this.props;
+        const version = getSceneVersion(elements)
+        if (version !== rootRecord.get('version') && version % 20 === 0) {  // Naive debouncing
+            // console.log('wheet', getSceneVersion(elements), rootRecord.get('version'));
+            rootRecord.set('version', version);
+            rootRecord.set('elements', JSON.stringify(elements));
+            rootRecord.set('state', JSON.stringify(state));
+        }
+        // console.log("Elements wiii3:", rootRecord.get('elements'), "State : ", rootRecord.get('elements'))
+        // console.log(rootRecord.get('elements'));
     }
 
     constructor(props: MainProps) {
         super(props);
         const { rootRecord } = props;
-        this.setupMenuActions_(rootRecord);
+        // this.setupMenuActions_(rootRecord);
         const data = rootRecord.getData();
         this.state = { data };
     }
@@ -69,7 +89,7 @@ export default class Main extends Component<MainProps, MainState> {
                 <div className={"excalidraw-wrapper"}>
                     {/* <h1>Hello, World4!</h1>
                         <p>App Data:</p> */}
-                    <Embed></Embed>
+                    <Embed onChange={this.onChange} />
                     {/* <pre>{JSON.stringify(data)}</pre> */}
                 </div>
             </div>

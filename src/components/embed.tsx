@@ -9,7 +9,11 @@ import {
     SceneData
 } from "@excalidraw/excalidraw/types/types";
 
-export default function Embed() {
+type Props = {
+    onChange: (elements: readonly ExcalidrawElement[], appState: AppState) => void;
+};
+
+export default function Embed(props: Props) {
     const excalidrawRef = useRef<ExcalidrawImperativeAPI>(null);
 
     useEffect(() => {
@@ -66,10 +70,8 @@ export default function Embed() {
                 <Excalidraw
                     ref={excalidrawRef}
                     initialData={InitialData}
-                    onChange={(elements: readonly ExcalidrawElement[], state: AppState) =>
-                        console.log("Elements :", elements, "State : ", state)
-                    }
-                    onPointerUpdate={(payload) => console.log(payload)}
+                    onChange={props.onChange}
+                    // onPointerUpdate={(payload) => console.log(payload)}
                     onCollabButtonClick={() =>
                         window.alert("You clicked on collab button")
                     }
