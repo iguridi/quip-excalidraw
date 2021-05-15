@@ -1,9 +1,11 @@
 import React, { useEffect, useState, useRef } from "react";
 import Excalidraw from "@excalidraw/excalidraw";
 import type { ExcalidrawImperativeAPI } from "@excalidraw/excalidraw/types/components/App";
-import InitialData from "./initialData";
+// import InitialData from "./initialData";
 
 import type { ExcalidrawElement } from "@excalidraw/excalidraw/types/element/types";
+import { ImportedDataState } from "@excalidraw/excalidraw/types/data/types";
+
 import {
     AppState,
     SceneData
@@ -11,12 +13,15 @@ import {
 
 type Props = {
     onChange: (elements: readonly ExcalidrawElement[], appState: AppState) => void;
+    initialData: ImportedDataState;
 };
 
 export default function Embed(props: Props) {
     const excalidrawRef = useRef<ExcalidrawImperativeAPI>(null);
 
     useEffect(() => {
+        console.log('woo2');
+        
         const onHashChange = () => {
             const hash = new URLSearchParams(window.location.hash.slice(1));
             const libraryUrl = hash.get("addLibrary");
@@ -24,44 +29,49 @@ export default function Embed(props: Props) {
                 excalidrawRef.current!.importLibrary(libraryUrl, hash.get("token"));
             }
         };
+        console.log('woo3');
         window.addEventListener("hashchange", onHashChange, false);
+        console.log('ejjem', props.initialData);
         return () => {
             window.removeEventListener("hashchange", onHashChange);
+            console.log('woo4');
         };
+        
+        
     }, []);
-    const updateScene = () => {
-        const sceneData: SceneData = {
-            elements: [
-                {
-                    type: "rectangle",
-                    version: 141,
-                    versionNonce: 361174001,
-                    isDeleted: false,
-                    id: "oDVXy8D6rom3H1-LLH2-f",
-                    fillStyle: "hachure",
-                    strokeWidth: 1,
-                    strokeStyle: "solid",
-                    roughness: 1,
-                    opacity: 100,
-                    angle: 0,
-                    x: 100.50390625,
-                    y: 93.67578125,
-                    strokeColor: "#c92a2a",
-                    backgroundColor: "transparent",
-                    width: 186.47265625,
-                    height: 141.9765625,
-                    seed: 1968410350,
-                    groupIds: [],
-                    strokeSharpness: "round",
-                    boundElementIds: null
-                }
-            ],
-            appState: {
-                // viewBackgroundColor: "#edf2ff"
-            }
-        };
-        excalidrawRef.current!.updateScene(sceneData);
-    };
+    // const updateScene = () => {
+    //     const sceneData: SceneData = {
+    //         elements: [
+    //             {
+    //                 type: "rectangle",
+    //                 version: 141,
+    //                 versionNonce: 361174001,
+    //                 isDeleted: false,
+    //                 id: "oDVXy8D6rom3H1-LLH2-f",
+    //                 fillStyle: "hachure",
+    //                 strokeWidth: 1,
+    //                 strokeStyle: "solid",
+    //                 roughness: 1,
+    //                 opacity: 100,
+    //                 angle: 0,
+    //                 x: 100.50390625,
+    //                 y: 93.67578125,
+    //                 strokeColor: "#c92a2a",
+    //                 backgroundColor: "transparent",
+    //                 width: 186.47265625,
+    //                 height: 141.9765625,
+    //                 seed: 1968410350,
+    //                 groupIds: [],
+    //                 strokeSharpness: "round",
+    //                 boundElementIds: null
+    //             }
+    //         ],
+    //         appState: {
+    //             // viewBackgroundColor: "#edf2ff"
+    //         }
+    //     };
+    //     excalidrawRef.current!.updateScene(sceneData);
+    // };
 
     return (
         <div className="App">
@@ -69,7 +79,7 @@ export default function Embed(props: Props) {
             <div className="excalidraw-wrapper">
                 <Excalidraw
                     ref={excalidrawRef}
-                    initialData={InitialData}
+                    initialData={props.initialData}
                     onChange={props.onChange}
                     // onPointerUpdate={(payload) => console.log(payload)}
                     onCollabButtonClick={() =>
