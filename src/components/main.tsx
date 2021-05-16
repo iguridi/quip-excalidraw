@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import { Menu } from "../menus";
 import { AppData, RootEntity } from "../model/root";
 import Embed from "./embed";
+import initialData from "./initialData";
 
 import type { ExcalidrawElement } from "@excalidraw/excalidraw/types/element/types";
 import { ImportedDataState } from "@excalidraw/excalidraw/types/data/types";
@@ -33,8 +34,16 @@ export default class Main extends Component<MainProps, MainState> {
 
     private initialData = (): ImportedDataState => {
         const { rootRecord } = this.props;
-        const elements = JSON.parse(rootRecord.get('elements'));
-        const appState = JSON.parse(rootRecord.get('state'));
+
+        let elements = rootRecord.get('elements');
+        let appState = rootRecord.get('state');
+        if (elements === undefined || appState === undefined) {
+            // Happens on new diagrams, when no info is saved
+            return initialData;
+        }
+
+        elements = JSON.parse(rootRecord.get('elements'));
+        appState = JSON.parse(rootRecord.get('state'));
         // Excalidraw calls .foreach on collaborators,
         // so we transform them to a type that allows for it
         appState.collaborators = new Map(Object.entries(appState.collaborators));
