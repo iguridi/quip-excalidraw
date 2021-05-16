@@ -6,8 +6,6 @@ import { Menu } from "./menus";
 import { RootEntity } from "./model/root";
 
 
-
-
 class Root extends quip.apps.RootRecord {
     static getProperties = () => ({
         elements: "string",
@@ -17,8 +15,6 @@ class Root extends quip.apps.RootRecord {
 }
 
 quip.apps.registerClass(Root, "root");
-
-// quip.apps.registerClass(RootEntity, RootEntity.ID);
 
 const menu = new Menu();
 
