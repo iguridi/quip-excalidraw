@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { Component, RefObject } from "react";
 import { Menu } from "../menus";
 import { AppData, RootEntity } from "../model/root";
 import Embed from "./embed";
@@ -37,16 +37,21 @@ export default class Main extends Component<MainProps, MainState> {
 
         let elements = rootRecord.get('elements');
         let appState = rootRecord.get('state');
+        console.log('Czlling inittial data');
+
         if (elements === undefined || appState === undefined) {
             // Happens on new diagrams, when no info is saved
             return initialData;
         }
 
-        elements = JSON.parse(rootRecord.get('elements'));
-        appState = JSON.parse(rootRecord.get('state'));
+        elements = JSON.parse(elements);
+        appState = JSON.parse(appState);
         // Excalidraw calls .foreach on collaborators,
         // so we transform them to a type that allows for it
         appState.collaborators = new Map(Object.entries(appState.collaborators));
+        // if (appState.gridSize === null) {
+        //     delete appState.gridSize;
+        // }
         const data: ImportedDataState = {
             elements,
             appState,
@@ -73,21 +78,16 @@ export default class Main extends Component<MainProps, MainState> {
         // will propogate changes to the render() method in this component
         // using setState
         // process.stdout.write('waaa');
-        // quip.apps.enableResizing({
-        //     minWidth: 200,
-        //     minHeight: 200,
-        //     maintainAspectRatio: false,
-        // });
         const { rootRecord } = this.props;
         // Save every third of a second
         this.interval = setInterval(this.saveState, 300);
-        rootRecord.listen(this.refreshData_);
-        this.refreshData_();
+        // rootRecord.listen(this.refreshData_);
+        // this.refreshData_();
     }
 
     componentWillUnmount() {
-        const { rootRecord } = this.props;
-        rootRecord.unlisten(this.refreshData_);
+        // const { rootRecord } = this.props;
+        // rootRecord.unlisten(this.refreshData_);
         clearInterval(this.interval); // Release saving timer
     }
 
@@ -96,13 +96,13 @@ export default class Main extends Component<MainProps, MainState> {
      * This component will render based on the values of `this.state.data`.
      * This function will set `this.state.data` using the RootEntity's AppData.
      */
-    private refreshData_ = () => {
-        const { rootRecord, menu } = this.props;
-        const data = rootRecord.getData();
-        // Update the app menu to reflect most recent app data
-        menu.updateToolbar(data);
-        this.setState({ data: rootRecord.getData() });
-    };
+    // private refreshData_ = () => {
+    //     const { rootRecord, menu } = this.props;
+    //     const data = rootRecord.getData();
+    //     // Update the app menu to reflect most recent app data
+    //     menu.updateToolbar(data);
+    //     this.setState({ data: rootRecord.getData() });
+    // };
 
     render() {
         const { data } = this.state;
@@ -110,7 +110,11 @@ export default class Main extends Component<MainProps, MainState> {
         return (
             <div className={"root"}>
                 <div className={"excalidraw-wrapper"}>
-                    <Embed onChange={this.onChange} initialData={this.initialData()} />
+                    <Embed
+                        rootRecord={this.props.rootRecord}
+                        onChange={this.onChange}
+                        initialData={this.initialData()}
+                    />
                 </div>
             </div>
         );
