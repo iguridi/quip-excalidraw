@@ -2,7 +2,6 @@ import React, { Component } from "react";
 import { Menu } from "../menus";
 import { AppData, RootEntity } from "../model/root";
 import Embed from "./embed";
-import { getSceneVersion } from "@excalidraw/excalidraw";
 
 import type { ExcalidrawElement } from "@excalidraw/excalidraw/types/element/types";
 import { ImportedDataState } from "@excalidraw/excalidraw/types/data/types";
@@ -20,14 +19,16 @@ interface MainState {
     data: AppData;
 }
 export default class Main extends Component<MainProps, MainState> {
+    private elements: string;
+    private appState: string;
+    private interval: NodeJS.Timeout;
     private onChange = (elements: readonly ExcalidrawElement[], state: AppState) => {
-        const { rootRecord } = this.props;
-        const version = getSceneVersion(elements)
-        if (version !== rootRecord.get('version') && version % 20 === 0) {  // Naive debouncing
-            rootRecord.set('version', version);
-            rootRecord.set('elements', JSON.stringify(elements));
-            rootRecord.set('state', JSON.stringify(state));
-        }
+        // Debouncing implementation
+        // We update the component props
+        // that will later be saved to Quip Record API via saveState function
+        // which is called every X milliseconds
+        this.elements = JSON.stringify(elements);
+        this.appState = JSON.stringify(state);
     }
 
     private initialData = (): ImportedDataState => {
@@ -52,6 +53,12 @@ export default class Main extends Component<MainProps, MainState> {
         this.state = { data };
     }
 
+    private saveState = () => {
+        const { rootRecord } = this.props;
+        rootRecord.set('elements', this.elements);
+        rootRecord.set('state', this.appState);
+    }
+
     componentDidMount() {
         // Set up the listener on the rootRecord (RootEntity). The listener
         // will propogate changes to the render() method in this component
@@ -63,6 +70,8 @@ export default class Main extends Component<MainProps, MainState> {
         //     maintainAspectRatio: false,
         // });
         const { rootRecord } = this.props;
+        // Save every third of a second
+        this.interval = setInterval(this.saveState, 300);
         rootRecord.listen(this.refreshData_);
         this.refreshData_();
     }
@@ -70,6 +79,7 @@ export default class Main extends Component<MainProps, MainState> {
     componentWillUnmount() {
         const { rootRecord } = this.props;
         rootRecord.unlisten(this.refreshData_);
+        clearInterval(this.interval); // Release saving timer
     }
 
     /**
