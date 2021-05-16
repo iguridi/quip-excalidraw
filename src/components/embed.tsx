@@ -25,28 +25,21 @@ export default function Embed(props: Props) {
             blobWithThumbnails => {
                 const blob = blobWithThumbnails[0].blob;
                 const filename = blob.getFilename();
-                // TODO: check filename finish with .excalidraw
+                // TODO: check filename finishes with .excalidraw
                 console.log('files uploaaded', filename)
                 blob.onDataLoaded(blob => {
                     const data = blob.getData();
-                    // console.log('daata', data);
                     const string = new TextDecoder().decode(data);
-                    // console.log('textou', string);
                     const parsed = JSON.parse(string);
                     const elements = parsed.elements;
                     const appState = parsed.appState;
-                    if (appState.gridSize === null) {
-                        delete appState.gridSize;
-                    }
+
                     appState.scrollToContents = true;
-                    console.log('not null??', elements, appState);
-                    // const rootRecord = quip.apps.getRootRecord() as RootEntity;
+
                     props.rootRecord.set('elements', JSON.stringify(elements));
-                    // rootRecord.set('state', JSON.stringify(appState));
-                    excalidrawRef.current!.updateScene({ elements });
-                    // restoreElements(elements);
-                    // restoreAppState({}, appState);
-                    console.log('se actualizoo?');
+                    props.rootRecord.set('state', JSON.stringify(appState));
+
+                    excalidrawRef.current!.updateScene({ elements, appState });
                 });
             },
         );
@@ -73,6 +66,8 @@ export default function Embed(props: Props) {
                     id: 'Import from file',
                     label: "Import from Wordpress Export",
                     handler: importFile,
+                    // Tried to receive the functions derectly using this action
+                    // Couldn't figure out how to obtain the blob
                     // actionId: quip.apps.DocumentMenuActions.SHOW_FILE_PICKER,
                     // actionStarted: () => { console.log('click on immport button'    ) },
                 },
