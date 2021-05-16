@@ -33,6 +33,24 @@ window.EXCALIDRAW_ASSET_PATH = "assets";
 //     maintainAspectRatio: false,
 // });
 quip.apps.initialize({
+    // TODO: Tried this, didn't do anything. Should have added toolbarCommandIds to
+    // to add this commands. I now this now, but it already works, 
+    // so I'm leaving this for a future refactor
+    // menuCommands: [
+    //     // {
+    //     //     id: quip.apps.DocumentMenuCommands.MENU_MAIN,
+    //     // },
+    //     {
+    //         id: 'no cachou nadai',
+    //         label: "Import from Wordpress Export",
+    //         handler: () => { console.log('click on impport button'); return true },
+    //     },
+    //     {
+    //         id: quip.apps.DocumentMenuActions.SHOW_FILE_PICKER,
+    //         label: "Import from Wordpress Export",
+    //         handler: () => { console.log('click on immport button'); return true },
+    //     },
+    // ],
     initializationCallback: function (
         rootNode: Element,
         params: {

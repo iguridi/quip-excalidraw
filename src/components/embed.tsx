@@ -50,6 +50,10 @@ export default function Embed(props: Props) {
                 });
             },
         );
+        // I don't know why we need to return bool. 
+        // Maybe is for error handling
+        return true; 
+
     }
 
     useEffect(() => {
@@ -60,6 +64,21 @@ export default function Embed(props: Props) {
                 excalidrawRef.current!.importLibrary(libraryUrl, hash.get("token"));
             }
         };
+        // TODO: This shouldn't be here, but I also need the excalidrawRef
+        // First option is to create the toolbar in root.ts and update the handler function at runtime
+        // Second option is to create the excalidrawRef also in root.ts
+        quip.apps.updateToolbar({
+            menuCommands: [
+                {
+                    id: 'Import from file',
+                    label: "Import from Wordpress Export",
+                    handler: importFile,
+                    // actionId: quip.apps.DocumentMenuActions.SHOW_FILE_PICKER,
+                    // actionStarted: () => { console.log('click on immport button'    ) },
+                },
+            ],
+            toolbarCommandIds: ['Import from file'],
+        });
         window.addEventListener("hashchange", onHashChange, false);
         return () => {
             window.removeEventListener("hashchange", onHashChange);
