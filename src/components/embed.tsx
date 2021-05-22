@@ -49,28 +49,23 @@ export default function Embed(props: Props) {
 
     }
 
-    const exportFile = () => {
-        console.log('wooo');
+    const exportToConsole = () => {
         const data = getData(props.rootRecord);
-        if(data === null) {
-            alert('No data to download');
-            return;
+        if (data === null) {
+            console.log('No data to download');
+            return false;
         }
-        
         const fileInfo = {
             "type": "excalidraw",
             "version": 2,
             "source": "https://excalidraw.com",
             ...data
         }
-        const enc = new TextEncoder(); // always utf-8
-        const buffer = enc.encode(JSON.stringify(fileInfo));
-        const blob = quip.apps.createBlobFromData(buffer, 'quip.excalidraw');
-        // This didn't worked, it throwed an error
-        blob.onDataLoaded(blob => blob.downloadAsFile());
-        // blob.onDataLoaded(blob => console.log(blob.url()));
-        console.log('did it work?');
-        
+        console.log(JSON.stringify(fileInfo));
+        console.log(
+            'For editing, copy last message into an editor, ' +
+            'save it with a .excalidraw extension. Then you ' +
+            'can upload it to excalidraw.com as a normal export file');
         return true;
     }
 
@@ -97,16 +92,16 @@ export default function Embed(props: Props) {
                     // actionStarted: () => { console.log('click on immport button'    ) },
                 },
                 {
-                    id: 'Export to file',
-                    label: "Export to Excalidraw file",
-                    handler: exportFile,
+                    id: 'Export to console',
+                    label: "Export to console",
+                    handler: exportToConsole,
                     // Tried to receive the functions directly using this action
                     // Couldn't figure out how to obtain the blob
                     // actionId: quip.apps.DocumentMenuActions.SHOW_FILE_PICKER,
                     // actionStarted: () => { console.log('click on immport button'    ) },
                 },
             ],
-            toolbarCommandIds: ['Import from file', 'Export to file'],
+            toolbarCommandIds: ['Import from file', 'Export to console'],
         });
         window.addEventListener("hashchange", onHashChange, false);
         return () => {

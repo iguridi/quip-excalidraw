@@ -19,5 +19,6 @@ export const getData: (rootRecord: RootEntity) => ImportedDataState | null = roo
     return {
         elements,
         appState,
+        scrollToContent: true
     }
 }

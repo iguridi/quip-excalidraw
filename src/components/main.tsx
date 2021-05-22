@@ -39,7 +39,6 @@ export default class Main extends Component<MainProps, MainState> {
         if (data === null) {
             return initialData;
         }
-        data.scrollToContent = true;
         return data;
     }
 
