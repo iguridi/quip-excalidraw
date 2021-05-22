@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import Excalidraw from "@excalidraw/excalidraw";
 import type { ExcalidrawImperativeAPI } from "@excalidraw/excalidraw/types/components/App";
 import quip from "quip-apps-api";
@@ -17,8 +17,32 @@ type Props = {
     rootRecord: RootEntity;
 };
 
+
 export default function Embed(props: Props) {
     const excalidrawRef = useRef<ExcalidrawImperativeAPI>(null);
+
+    const [focused, setFocus] = useState(false);
+
+    const canEdit = quip.apps.isDocumentEditable();
+
+    quip.apps.addEventListener(
+        quip.apps.EventType.FOCUS,
+        () => setFocus(true)
+    );
+    quip.apps.addEventListener(
+        quip.apps.EventType.BLUR,
+        () => setFocus(false)
+    );
+
+    // Set in and out of view mode, depending on app focus 
+    // and edit permissions for the document
+    let viewMode = false;
+    if (!focused) {
+        viewMode = true;
+    }
+    if (!canEdit) {
+        viewMode = true;
+    }
 
     const importFile = () => {
         quip.apps.showFilePicker(
@@ -69,6 +93,8 @@ export default function Embed(props: Props) {
         return true;
     }
 
+
+
     useEffect(() => {
         const onHashChange = () => {
             const hash = new URLSearchParams(window.location.hash.slice(1));
@@ -109,7 +135,6 @@ export default function Embed(props: Props) {
         };
     }, []);
 
-
     return (
         <div className="App">
             <div className="excalidraw-wrapper">
@@ -118,6 +143,7 @@ export default function Embed(props: Props) {
                     initialData={props.initialData}
                     onChange={props.onChange}
                     name="Custom name of drawing"
+                    viewModeEnabled={viewMode}
                     UIOptions={{
                         canvasActions: {
                             saveAsScene: false,
