@@ -20,7 +20,6 @@ quip.apps.registerClass(Root, "root");
 
 const menu = new Menu();
 
-
 declare global {
     interface Window { EXCALIDRAW_ASSET_PATH: any; }
 }

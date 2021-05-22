@@ -3,6 +3,7 @@ import Excalidraw from "@excalidraw/excalidraw";
 import type { ExcalidrawImperativeAPI } from "@excalidraw/excalidraw/types/components/App";
 import quip from "quip-apps-api";
 import { RootEntity } from "../model/root";
+import { getData } from './utils'
 
 
 import type { ExcalidrawElement } from "@excalidraw/excalidraw/types/element/types";
@@ -26,7 +27,6 @@ export default function Embed(props: Props) {
                 const blob = blobWithThumbnails[0].blob;
                 const filename = blob.getFilename();
                 // TODO: check filename finishes with .excalidraw
-                console.log('files uploaaded', filename)
                 blob.onDataLoaded(blob => {
                     const data = blob.getData();
                     const string = new TextDecoder().decode(data);
@@ -45,8 +45,33 @@ export default function Embed(props: Props) {
         );
         // I don't know why we need to return bool. 
         // Maybe is for error handling
-        return true; 
+        return true;
 
+    }
+
+    const exportFile = () => {
+        console.log('wooo');
+        const data = getData(props.rootRecord);
+        if(data === null) {
+            alert('No data to download');
+            return;
+        }
+        
+        const fileInfo = {
+            "type": "excalidraw",
+            "version": 2,
+            "source": "https://excalidraw.com",
+            ...data
+        }
+        const enc = new TextEncoder(); // always utf-8
+        const buffer = enc.encode(JSON.stringify(fileInfo));
+        const blob = quip.apps.createBlobFromData(buffer, 'quip.excalidraw');
+        // This didn't worked, it throwed an error
+        blob.onDataLoaded(blob => blob.downloadAsFile());
+        // blob.onDataLoaded(blob => console.log(blob.url()));
+        console.log('did it work?');
+        
+        return true;
     }
 
     useEffect(() => {
@@ -64,15 +89,24 @@ export default function Embed(props: Props) {
             menuCommands: [
                 {
                     id: 'Import from file',
-                    label: "Import from Wordpress Export",
+                    label: "Import from Excalidraw file",
                     handler: importFile,
-                    // Tried to receive the functions derectly using this action
+                    // Tried to receive the functions directly using this action
+                    // Couldn't figure out how to obtain the blob
+                    // actionId: quip.apps.DocumentMenuActions.SHOW_FILE_PICKER,
+                    // actionStarted: () => { console.log('click on immport button'    ) },
+                },
+                {
+                    id: 'Export to file',
+                    label: "Export to Excalidraw file",
+                    handler: exportFile,
+                    // Tried to receive the functions directly using this action
                     // Couldn't figure out how to obtain the blob
                     // actionId: quip.apps.DocumentMenuActions.SHOW_FILE_PICKER,
                     // actionStarted: () => { console.log('click on immport button'    ) },
                 },
             ],
-            toolbarCommandIds: ['Import from file'],
+            toolbarCommandIds: ['Import from file', 'Export to file'],
         });
         window.addEventListener("hashchange", onHashChange, false);
         return () => {

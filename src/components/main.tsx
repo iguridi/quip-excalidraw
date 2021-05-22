@@ -5,6 +5,7 @@ import Embed from "./embed";
 import initialData from "./initialData";
 
 import type { ExcalidrawElement } from "@excalidraw/excalidraw/types/element/types";
+import { getData } from './utils'
 import { ImportedDataState } from "@excalidraw/excalidraw/types/data/types";
 
 import { AppState } from "@excalidraw/excalidraw/types/types";
@@ -34,29 +35,11 @@ export default class Main extends Component<MainProps, MainState> {
 
     private initialData = (): ImportedDataState => {
         const { rootRecord } = this.props;
-
-        let elements = rootRecord.get('elements');
-        let appState = rootRecord.get('state');
-        console.log('Czlling inittial data');
-
-        if (elements === undefined || appState === undefined) {
-            // Happens on new diagrams, when no info is saved
+        const data = getData(rootRecord);
+        if (data === null) {
             return initialData;
         }
-
-        elements = JSON.parse(elements);
-        appState = JSON.parse(appState);
-        // Excalidraw calls .foreach on collaborators,
-        // so we transform them to a type that allows for it
-        appState.collaborators = new Map(Object.entries(appState.collaborators));
-        // if (appState.gridSize === null) {
-        //     delete appState.gridSize;
-        // }
-        const data: ImportedDataState = {
-            elements,
-            appState,
-            scrollToContent: true
-        }
+        data.scrollToContent = true;
         return data;
     }
 
