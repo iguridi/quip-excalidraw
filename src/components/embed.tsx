@@ -117,10 +117,17 @@ export default function Embed(props: Props) {
                     ref={excalidrawRef}
                     initialData={props.initialData}
                     onChange={props.onChange}
-                    onCollabButtonClick={() =>
-                        window.alert("You clicked on collab button")
-                    }
                     name="Custom name of drawing"
+                    UIOptions={{
+                        canvasActions: {
+                            saveAsScene: false,
+                            saveScene: false,
+                            loadScene: false,
+                            export: false,
+                            clearCanvas: false,
+                            changeViewBackgroundColor: false
+                        }
+                    }}
                 />
             </div>
         </div>
