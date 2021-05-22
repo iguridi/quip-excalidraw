@@ -49,7 +49,7 @@ const initialData: ImportedDataState = {
       boundElementIds: null
     }
   ],
-  appState: { viewBackgroundColor: "#CCC", currentItemFontFamily: 1 },
+  appState: { viewBackgroundColor: "#fff", currentItemFontFamily: 1 },
   scrollToContent: true
 };
 
