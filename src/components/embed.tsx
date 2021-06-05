@@ -61,7 +61,7 @@ export default function Embed(props: Props) {
                     props.rootRecord.set('elements', JSON.stringify(elements));
                     props.rootRecord.set('state', JSON.stringify(appState));
 
-                    excalidrawRef.current!.updateScene({ elements, appState, scrollToContent: true });
+                    excalidrawRef.current!.updateScene({ elements, appState});
                     excalidrawRef.current!.setScrollToContent(elements);
                 });
             },
