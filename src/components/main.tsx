@@ -3,6 +3,8 @@ import { Menu } from "../menus";
 import { AppData, RootEntity } from "../model/root";
 import Embed from "./embed";
 import initialData from "./initialData";
+import { getSceneVersion } from "@excalidraw/excalidraw";
+import type { ExcalidrawImperativeAPI } from "@excalidraw/excalidraw/types/components/App";
 
 import type { ExcalidrawElement } from "@excalidraw/excalidraw/types/element/types";
 import { getData } from './utils'
@@ -20,20 +22,11 @@ interface MainProps {
 interface MainState {
     data: AppData;
 }
-export default class Main extends Component<MainProps, MainState> {
-    private elements: string;
-    private appState: string;
-    private interval: NodeJS.Timeout;
-    private onChange = (elements: readonly ExcalidrawElement[], state: AppState) => {
-        // Debouncing implementation
-        // We update the component props
-        // that will later be saved to Quip Record API via saveState function
-        // which is called every X milliseconds
-        this.elements = JSON.stringify(elements);
-        this.appState = JSON.stringify(state);
-    }
 
-    private initialData = (): ImportedDataState => {
+export default class Main extends Component<MainProps, MainState> {
+    private excalidrawRef = React.createRef<ExcalidrawImperativeAPI>();
+
+    private getInitialData = (): ImportedDataState => {
         const { rootRecord } = this.props;
         const data = getData(rootRecord);
         if (data === null) {
@@ -41,6 +34,22 @@ export default class Main extends Component<MainProps, MainState> {
         }
         return data;
     }
+    private elements: string;
+    private appState: string;
+    private version: number;
+    private initialData: ImportedDataState = this.getInitialData();
+    private interval: NodeJS.Timeout;
+    private saveToState = (elements: readonly ExcalidrawElement[], state: AppState) => {
+        // Debouncing implementation
+        // We update the component props
+        // that will later be saved to Quip Record API via saveToRecords function
+        // which is called every X milliseconds
+        this.version = getSceneVersion(elements);
+        this.elements = JSON.stringify(elements);
+        this.appState = JSON.stringify(state);
+    }
+
+
 
     constructor(props: MainProps) {
         super(props);
@@ -49,27 +58,29 @@ export default class Main extends Component<MainProps, MainState> {
         this.state = { data };
     }
 
-    private saveState = () => {
+    private saveToRecords = () => {
         const { rootRecord } = this.props;
+        if (this.version === rootRecord.get('version')) {
+            // not saving because is the same version
+            return;
+        }
         rootRecord.set('elements', this.elements);
         rootRecord.set('state', this.appState);
+        rootRecord.set('version', this.version);
     }
 
     componentDidMount() {
-        // Set up the listener on the rootRecord (RootEntity). The listener
-        // will propogate changes to the render() method in this component
-        // using setState
-        // process.stdout.write('waaa');
         const { rootRecord } = this.props;
+
         // Save every third of a second
-        this.interval = setInterval(this.saveState, 300);
-        // rootRecord.listen(this.refreshData_);
-        // this.refreshData_();
+        this.interval = setInterval(this.saveToRecords, 300);
+        // Set up the listener on the rootRecord (RootEntity)
+        rootRecord.listen(this.updateOnExternalChange);
     }
 
     componentWillUnmount() {
-        // const { rootRecord } = this.props;
-        // rootRecord.unlisten(this.refreshData_);
+        const { rootRecord } = this.props;
+        rootRecord.unlisten(this.updateOnExternalChange);
         clearInterval(this.interval); // Release saving timer
     }
 
@@ -78,24 +89,31 @@ export default class Main extends Component<MainProps, MainState> {
      * This component will render based on the values of `this.state.data`.
      * This function will set `this.state.data` using the RootEntity's AppData.
      */
-    // private refreshData_ = () => {
-    //     const { rootRecord, menu } = this.props;
-    //     const data = rootRecord.getData();
-    //     // Update the app menu to reflect most recent app data
-    //     menu.updateToolbar(data);
-    //     this.setState({ data: rootRecord.getData() });
-    // };
+    private updateOnExternalChange = () => {
+        const { rootRecord, menu } = this.props;
+        if (this.version === rootRecord.get('version')) {
+            return;
+        }
+        // Update state, for later saving on debouncing function
+        this.version = rootRecord.get('version')
+        this.elements = rootRecord.get('elements')
+        this.appState = rootRecord.get('state')
+        // Update components
+        this.excalidrawRef.current!.updateScene({
+            elements: JSON.parse(this.elements),
+            appState: JSON.parse(this.appState)
+        });
+    };
 
     render() {
-        const { data } = this.state;
-        const { isHighlighted } = data;
         return (
             <div className={"root"}>
                 <div className={"excalidraw-wrapper"}>
                     <Embed
+                        excalidrawRef={this.excalidrawRef}
                         rootRecord={this.props.rootRecord}
-                        onChange={this.onChange}
-                        initialData={this.initialData()}
+                        onChange={this.saveToState}
+                        initialData={this.initialData}
                     />
                 </div>
             </div>

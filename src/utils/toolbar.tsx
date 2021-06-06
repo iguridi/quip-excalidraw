@@ -33,8 +33,7 @@ export const createToolbar = (
 
 
 
-export const exportToConsole = (rootRecord: RootEntity) => {
-    console.log('woooo');
+const exportToConsole = (rootRecord: RootEntity) => {
     const data = getData(rootRecord);
     if (data === null) {
         console.log('No data to download');
@@ -55,7 +54,7 @@ export const exportToConsole = (rootRecord: RootEntity) => {
 }
 
 
-export const importFile = (
+const importFile = (
     rootRecord: RootEntity,
     excalidrawRef: React.RefObject<ExcalidrawImperativeAPI>
 ) => {

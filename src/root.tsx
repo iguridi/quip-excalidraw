@@ -10,8 +10,6 @@ class Root extends quip.apps.RootRecord {
     static getProperties = () => ({
         elements: "string",
         state: "string",
-        // Keep just to get rid of an alert. 
-        // It is not used anymore, so just delete it
         version: "number",
     })
 }

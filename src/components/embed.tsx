@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState, RefObject } from "react";
 import Excalidraw from "@excalidraw/excalidraw";
 import type { ExcalidrawImperativeAPI } from "@excalidraw/excalidraw/types/components/App";
 import quip from "quip-apps-api";
@@ -14,11 +14,12 @@ type Props = {
     onChange: (elements: readonly ExcalidrawElement[], appState: AppState) => void;
     initialData: ImportedDataState;
     rootRecord: RootEntity;
+    excalidrawRef: RefObject<ExcalidrawImperativeAPI>;
 };
 
 
 export default function Embed(props: Props) {
-    const excalidrawRef = useRef<ExcalidrawImperativeAPI>(null);
+    const excalidrawRef = props.excalidrawRef;
 
     const [focused, setFocus] = useState(false);
 
@@ -44,22 +45,10 @@ export default function Embed(props: Props) {
     }
 
     useEffect(() => {
-        const onHashChange = () => {
-            const hash = new URLSearchParams(window.location.hash.slice(1));
-            const libraryUrl = hash.get("addLibrary");
-            if (libraryUrl) {
-                excalidrawRef.current!.importLibrary(libraryUrl, hash.get("token"));
-            }
-        };
         // TODO: This shouldn't be here, but I also need the excalidrawRef
         // First option is to create the toolbar in root.ts and update the handler function at runtime
         // Second option is to create the excalidrawRef also in root.ts        
         createToolbar(props.rootRecord, excalidrawRef)
-
-        window.addEventListener("hashchange", onHashChange, false);
-        return () => {
-            window.removeEventListener("hashchange", onHashChange);
-        };
     }, []);
 
     return (
