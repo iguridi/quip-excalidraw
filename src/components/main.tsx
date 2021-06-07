@@ -84,13 +84,8 @@ export default class Main extends Component<MainProps, MainState> {
         clearInterval(this.interval); // Release saving timer
     }
 
-    /**
-     * Update the app state using the RootEntity's AppData.
-     * This component will render based on the values of `this.state.data`.
-     * This function will set `this.state.data` using the RootEntity's AppData.
-     */
     private updateOnExternalChange = () => {
-        const { rootRecord, menu } = this.props;
+        const { rootRecord } = this.props;
         if (this.version === rootRecord.get('version')) {
             return;
         }
